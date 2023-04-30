@@ -27,8 +27,28 @@ def clean_dir(folder):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+def create_dirs():
+    import os
+
+def create_dirs():
+    try:
+        os.mkdir("statis/downloads")
+    except:
+        print("LOG : static/downloads directory already there")
+    try:
+        os.mkdir("uploads")
+    except:
+        print("LOG : uploads directory already there")
+    try:
+        os.mkdir("temporary")
+    except:
+        print("LOG : temporary directory already there")
+
+create_dirs()
+
 @app.route("/home", methods = ["GET","POST"])
 def generateParams():
+    create_dirs()
     clean_dir(configs['download_loc'])
     clean_dir(configs['temp'])
     clean_dir(configs['upload_loc'])
@@ -97,14 +117,14 @@ def generateParams():
                     apiOutput["output_file_path"] = str(os.path.join(path, parameter_file_name))
                 else:
                     apiOutput["error_message"] = "The parameter does not exists in the log files"
+                # clean_dir(configs['temp'])
+                # clean_dir(configs['upload_loc'])
                 return send_file("./static/downloads/output.csv", as_attachment=True)                
             except:
                 apiOutput["error_message"] = "Could not generate due to some internal server error"
         else:
             apiOutput["error_message"] = "Either payload is empty or provided wrong information"
-    # clean_dir(configs['download_loc'])
-    clean_dir(configs['temp'])
-    clean_dir(configs['upload_loc'])
+
     print(apiOutput)
 
     return render_template("index.html")
